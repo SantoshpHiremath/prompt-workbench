@@ -1,12 +1,8 @@
 # Prompt Engineering Workbench
 
 A React app for drafting, logging, and scoring prompts against a small,
-transparent rubric — built to get real, tested experience with a modern
-frontend framework (React) combined with prompt-engineering practice,
-closing a specific gap: prior projects used vanilla HTML/CSS/JS, not a
-framework, and several current internship postings ask for framework
-experience (React, Vue) specifically alongside AI-tools/prompt-engineering
-skills.
+transparent rubric. I built it to combine hands-on work with a modern
+frontend framework (React) and prompt-engineering practice.
 
 ## What it does
 
@@ -19,45 +15,39 @@ skills.
   far, recalculated on every new entry.
 - **Search** — filter the log by prompt text or notes.
 
-## Why the scorer is rule-based, not an LLM judge
+## Scope
 
-Same honesty approach as the
-[ai-report-automation](../ai-report-automation/) project: this build
-environment has no LLM API access (no API key, no local model runtime), so
-rather than fake an "AI-scored" feature, the rubric scorer is a real,
-deterministic, fully-tested heuristic — keyword presence for clarity/
-specificity, word-count banding for length. It's disclosed as exactly that.
-Swapping in an LLM-based judge later (e.g. "does this prompt clearly state
-the task and format?" scored by a real model call) would replace
-`scorePrompt()` in `src/logic.js` without needing to change anything else
-in the app.
+The scorer is a rule-based rubric rather than an LLM judge: keyword presence
+for clarity and specificity, word-count banding for length. It is
+deterministic and fully tested, and it needs no API key or model runtime.
+An LLM-based judge (for example, "does this prompt clearly state the task and
+format?") can replace `scorePrompt()` in `src/logic.js` without changing
+anything else in the app.
 
 ## Tech
 
 - React 19 + Vite
-- Plain CSS (no UI framework) — kept intentionally simple
+- Plain CSS (no UI framework), kept intentionally simple
 - Vitest + React Testing Library for tests
 
-## Verification
+## Tests
 
 18 tests, all passing (`npx vitest run`):
-- 15 unit tests on the pure logic layer (`src/logic.test.js`) — scoring
+- 14 unit tests on the pure logic layer (`src/logic.test.js`): scoring
   edge cases (empty input, very long input, keyword caps), log-entry
   creation, dashboard summary computation, and search filtering.
 - 4 integration tests (`src/App.test.jsx`) rendering the real app with
-  React Testing Library — logging a prompt end-to-end and confirming it
-  appears with the correct score, confirming empty submissions are
-  rejected, and confirming the search box actually filters the rendered
-  list. Two of these initially failed on ambiguous text queries (the same
-  text can legitimately appear in both the log list and the dashboard's
-  "best scoring" preview) — fixed by scoping the assertions to the correct
-  DOM region rather than weakening what they check.
+  React Testing Library: logging a prompt end-to-end and confirming it
+  appears with the correct score, rejecting empty submissions, and
+  confirming the search box filters the rendered list. Assertions are scoped
+  to the correct DOM region, because the same text can legitimately appear
+  in both the log list and the dashboard's "best scoring" preview.
 
-Also verified visually: built for production (`npm run build`), served
-with `vite preview`, and driven with a real headless-browser script
+I also checked it in a real browser: a production build (`npm run build`)
+served with `vite preview` and driven by a headless-browser script
 (Playwright) that types into the form, submits two prompts of different
-quality, and screenshots the rendered result — confirming the dashboard and
-scores update correctly in an actual browser, not just in test assertions.
+quality, and screenshots the result. The dashboard and scores update
+correctly (see `app_screenshot.png`).
 
 ## Running it
 
